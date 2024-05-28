@@ -1,11 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState , useRef } from 'react'
 import Header from '../components/Header';
+import {checkValidData} from '../utils/validate'
 
 const Login = () => {
   const [isSignInForm,setIsSignInForm] = useState(true)
+  const[errorMessage, setErrorMessage] = useState(null);
+  const email = useRef(null);
+  const password = useRef(null);
+
+  const handleButtonClick = () => {
+    const errorMessage = checkValidData(email.current.value, password.current.value)
+    setErrorMessage(errorMessage)
+  }
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm)
   };
+
   return (
     <>
       <Header/>
@@ -17,24 +27,35 @@ const Login = () => {
         />
       </div>
         <div>
-        <form className='absolute rounded-lg w-3/12 my-36 mx-auto right-0 left-0 text-white p-12 bg-black bg-opacity-80'>
+        <form 
+          onSubmit={(e) => e.preventDefault}
+          className='absolute rounded-lg w-4/12 my-36 mx-auto right-0 left-0 text-white p-12 bg-black bg-opacity-80'>
           <h1 className='font-bold text-3xl py-4'>{isSignInForm ? "Sign In" : "Sign Up"}</h1>
-          {!isSignInForm &&<input 
+          {!isSignInForm && <input 
             className='p-4 my-4 w-full bg-gray-800'
             type='text' 
             placeholder='Full Name'>
           </input>} 
           <input 
+            ref={email}
             className='p-4 my-4 w-full bg-gray-800'
             type='text' 
             placeholder='Email Address'>
           </input>
           <input 
+            ref={password}
             className='p-4 my-4 w-full bg-gray-800'
             type='password' 
             placeholder='Password'>
           </input>
-          <button className='p-4 my-6 bg-red-700 w-full rounded-lg'>Sign In</button>
+          {errorMessage && <p className='text-red-500 text-lg'>{ "* " + errorMessage}</p> }
+          <button 
+          type='button'
+            className='p-4 my-6 bg-red-700 w-full rounded-lg'
+            onClick={handleButtonClick}
+          >
+            {isSignInForm ? "Sign In" : "Sign Up"}
+          </button>
           <div className='flex'>
           <p className='p-4'>
             {isSignInForm 
@@ -46,7 +67,7 @@ const Login = () => {
               type='button'
               onClick={toggleSignInForm} 
               className='font-bold'>
-                {isSignInForm ? "Sign Up" : "Just Sign In"}
+                {isSignInForm ? "Sign Up" : "Sign In"}
             </button>
           </div>
         </form>
